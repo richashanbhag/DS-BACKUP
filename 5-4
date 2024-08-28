@@ -1,0 +1,81 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX 100
+
+int stack1[MAX], stack2[MAX];
+int top1 = -1, top2 = -1;
+
+void push1(int data) {
+    if (top1 == MAX - 1)
+        printf("Stack overflow\n");
+    else
+        stack1[++top1] = data;
+}
+
+int pop1() {
+    if (top1 == -1)
+        printf("Stack underflow\n");
+    else
+        return stack1[top1--];
+    return -1;
+}
+
+void push2(int data) {
+    if (top2 == MAX - 1)
+        printf("Stack overflow\n");
+    else
+        stack2[++top2] = data;
+}
+
+int pop2() {
+    if (top2 == -1)
+        printf("Stack underflow\n");
+    else
+        return stack2[top2--];
+    return -1;
+}
+
+void enqueue(int data) {
+    push1(data);
+}
+
+int dequeue() {
+    if (top2 == -1) {
+        while (top1 != -1)
+            push2(pop1());
+    }
+    return pop2();
+}
+
+int main() {
+    int choice, data;
+
+    while (1) {
+        printf("\nQueue Operations using Stacks:\n");
+        printf("1. Enqueue\n");
+        printf("2. Dequeue\n");
+        printf("3. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 1:
+                printf("Enter the data to enqueue: ");
+                scanf("%d", &data);
+                enqueue(data);
+                break;
+            case 2:
+                data = dequeue();
+                if (data != -1)
+                    printf("Dequeued element: %d\n", data);
+                break;
+            case 3:
+                exit(0);
+            default:
+                printf("Invalid choice\n");
+        }
+    }
+
+    return 0;
+}
