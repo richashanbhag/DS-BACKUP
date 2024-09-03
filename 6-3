@@ -1,0 +1,53 @@
+#include <stdio.h>
+#include <ctype.h>
+#include <string.h>
+
+#define MAX 100
+
+char stack[MAX][MAX];
+int top = -1;
+
+void push(char* str) {
+    if (top < MAX - 1)
+        strcpy(stack[++top], str);
+}
+
+char* pop() {
+    if (top != -1)
+        return stack[top--];
+    return NULL;
+}
+
+void prefixToInfix(char* prefix, char* infix) {
+    int len = strlen(prefix);
+
+    for (int i = len - 1; i >= 0; i--) {
+        char c = prefix[i];
+
+        if (isalnum(c)) {
+            char temp[2] = {c, '\0'};
+            push(temp);
+        } else {
+            char op1[MAX], op2[MAX];
+            strcpy(op1, pop());
+            strcpy(op2, pop());
+            sprintf(infix, "(%s%c%s)", op1, c, op2);
+            push(infix);
+        }
+    }
+
+    strcpy(infix, pop());
+}
+
+int main() {
+    char prefix[MAX], infix[MAX];
+
+    printf("Enter a prefix expression: ");
+    gets(prefix);
+
+    prefixToInfix(prefix, infix);
+
+    printf("Fully parenthesized infix expression: %s\n", infix);
+
+    return 0;
+}
