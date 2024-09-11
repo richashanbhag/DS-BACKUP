@@ -1,0 +1,82 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node* next;
+};
+
+struct Node* createNode(int data) {
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    newNode->data = data;
+    newNode->next = NULL;
+    return newNode;
+}
+
+struct Node* mergeLists(struct Node* X, struct Node* Y) {
+    if (X == NULL) return Y;
+    if (Y == NULL) return X;
+    struct Node* Z = NULL;
+    if (X->data <= Y->data) {
+        Z = X;
+        Z->next = mergeLists(X->next, Y);
+    } else {
+        Z = Y;
+        Z->next = mergeLists(X, Y->next);
+    }
+    return Z;
+}
+
+void traverseList(struct Node* head) {
+    while (head != NULL) {
+        printf("%d -> ", head->data);
+        head = head->next;
+    }
+    printf("NULL\n");
+}
+
+int main() {
+    struct Node* X = NULL;
+    struct Node* Y = NULL;
+    struct Node* Z;
+    int data;
+
+    printf("Enter elements for list X (-1 to stop): ");
+    while (1) {
+        scanf("%d", &data);
+        if (data == -1) break;
+        struct Node* newNode = createNode(data);
+        if (X == NULL) {
+            X = newNode;
+        } else {
+            struct Node* temp = X;
+            while (temp->next != NULL) {
+                temp = temp->next;
+            }
+            temp->next = newNode;
+        }
+    }
+
+    printf("Enter elements for list Y (-1 to stop): ");
+    while (1) {
+        scanf("%d", &data);
+        if (data == -1) break;
+        struct Node* newNode = createNode(data);
+        if (Y == NULL) {
+            Y = newNode;
+        } else {
+            struct Node* temp = Y;
+            while (temp->next != NULL) {
+                temp = temp->next;
+            }
+            temp->next = newNode;
+        }
+    }
+
+    Z = mergeLists(X, Y);
+
+    printf("Merged list: ");
+    traverseList(Z);
+
+    return 0;
+}
