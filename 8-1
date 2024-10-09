@@ -1,0 +1,243 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node* prev;
+    struct Node* next;
+};
+
+struct Node* createNode(int value) {
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    newNode->data = value;
+    newNode->prev = NULL;
+    newNode->next = NULL;
+    return newNode;
+}
+
+void insertRear(struct Node** head, int value) {
+    struct Node* newNode = createNode(value);
+    if (*head == NULL) {
+        *head = newNode;
+        return;
+    }
+
+    struct Node* temp = *head;
+    while (temp->next != NULL) {
+        temp = temp->next;
+    }
+    temp->next = newNode;
+    newNode->prev = temp;
+}
+
+void deleteRear(struct Node** head) {
+    if (*head == NULL) {
+        printf("List is empty.\n");
+        return;
+    }
+
+    struct Node* temp = *head;
+    while (temp->next != NULL) {
+        temp = temp->next;
+    }
+
+    if (temp->prev != NULL) {
+        temp->prev->next = NULL;
+    } else {
+        *head = NULL;
+    }
+    free(temp);
+}
+
+void insertAtPosition(struct Node** head, int value, int position) {
+    struct Node* newNode = createNode(value);
+    if (position == 1) {
+        newNode->next = *head;
+        if (*head != NULL)
+            (*head)->prev = newNode;
+        *head = newNode;
+        return;
+    }
+
+    struct Node* temp = *head;
+    for (int i = 1; i < position - 1 && temp != NULL; i++) {
+        temp = temp->next;
+    }
+
+    if (temp == NULL) {
+        printf("Position out of range.\n");
+        return;
+    }
+
+    newNode->next = temp->next;
+    if (temp->next != NULL)
+        temp->next->prev = newNode;
+    temp->next = newNode;
+    newNode->prev = temp;
+}
+
+void deleteAtPosition(struct Node** head, int position) {
+    if (*head == NULL) {
+        printf("List is empty.\n");
+        return;
+    }
+
+    struct Node* temp = *head;
+    if (position == 1) {
+        *head = temp->next;
+        if (*head != NULL)
+            (*head)->prev = NULL;
+        free(temp);
+        return;
+    }
+
+    for (int i = 1; i < position && temp != NULL; i++) {
+        temp = temp->next;
+    }
+
+    if (temp == NULL) {
+        printf("Position out of range.\n");
+        return;
+    }
+
+    if (temp->prev != NULL)
+        temp->prev->next = temp->next;
+    if (temp->next != NULL)
+        temp->next->prev = temp->prev;
+    
+    free(temp);
+}
+
+void insertAfter(struct Node** head, int value, int afterValue) {
+    struct Node* temp = *head;
+    while (temp != NULL && temp->data != afterValue) {
+        temp = temp->next;
+    }
+
+    if (temp == NULL) {
+        printf("Element not found.\n");
+        return;
+    }
+
+    struct Node* newNode = createNode(value);
+    newNode->next = temp->next;
+    if (temp->next != NULL)
+        temp->next->prev = newNode;
+    temp->next = newNode;
+    newNode->prev = temp;
+}
+
+void insertBefore(struct Node** head, int value, int beforeValue) {
+    struct Node* temp = *head;
+    while (temp != NULL && temp->data != beforeValue) {
+        temp = temp->next;
+    }
+
+    if (temp == NULL) {
+        printf("Element not found.\n");
+        return;
+    }
+
+    struct Node* newNode = createNode(value);
+    newNode->prev = temp->prev;
+    newNode->next = temp;
+    if (temp->prev != NULL)
+        temp->prev->next = newNode;
+    else
+        *head = newNode;
+    temp->prev = newNode;
+}
+
+void traverse(struct Node* head) {
+    struct Node* temp = head;
+    while (temp != NULL) {
+        printf("%d ", temp->data);
+        temp = temp->next;
+    }
+    printf("\n");
+}
+
+void reverse(struct Node** head) {
+    struct Node* temp = NULL;
+    struct Node* current = *head;
+
+    while (current != NULL) {
+        temp = current->prev;
+        current->prev = current->next;
+        current->next = temp;
+        current = current->prev;
+    }
+
+    if (temp != NULL) {
+        *head = temp->prev;
+    }
+}
+
+int main() {
+    struct Node* head = NULL;
+    int choice, value, position, refValue;
+
+    do {
+        printf("\nMenu:\n");
+        printf("1. Insert at rear\n");
+        printf("2. Delete from rear\n");
+        printf("3. Insert at position\n");
+        printf("4. Delete from position\n");
+        printf("5. Insert after element\n");
+        printf("6. Insert before element\n");
+        printf("7. Traverse list\n");
+        printf("8. Reverse list\n");
+        printf("9. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 1:
+                printf("Enter value: ");
+                scanf("%d", &value);
+                insertRear(&head, value);
+                break;
+            case 2:
+                deleteRear(&head);
+                break;
+            case 3:
+                printf("Enter value: ");
+                scanf("%d", &value);
+                printf("Enter position: ");
+                scanf("%d", &position);
+                insertAtPosition(&head, value, position);
+                break;
+            case 4:
+                printf("Enter position: ");
+                scanf("%d", &position);
+                deleteAtPosition(&head, position);
+                break;
+            case 5:
+                printf("Enter value to insert: ");
+                scanf("%d", &value);
+                printf("Enter element to insert after: ");
+                scanf("%d", &refValue);
+                insertAfter(&head, value, refValue);
+                break;
+            case 6:
+                printf("Enter value to insert: ");
+                scanf("%d", &value);
+                printf("Enter element to insert before: ");
+                scanf("%d", &refValue);
+                insertBefore(&head, value, refValue);
+                break;
+            case 7:
+                traverse(head);
+                break;
+            case 8:
+                reverse(&head);
+                break;
+            case 9:
+                exit(0);
+            default:
+                printf("Invalid choice.\n");
+        }
+    } while (choice != 9);
+
+    return 0;
+}
