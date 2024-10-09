@@ -1,0 +1,119 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node* prev;
+    struct Node* next;
+};
+
+struct Node* createNode(int value) {
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    newNode->data = value;
+    newNode->prev = NULL;
+    newNode->next = NULL;
+    return newNode;
+}
+
+void insertRear(struct Node** head, int value) {
+    struct Node* newNode = createNode(value);
+    if (*head == NULL) {
+        *head = newNode;
+        return;
+    }
+
+    struct Node* temp = *head;
+    while (temp->next != NULL) {
+        temp = temp->next;
+    }
+    temp->next = newNode;
+    newNode->prev = temp;
+}
+
+void traverse(struct Node* head) {
+    struct Node* temp = head;
+    while (temp != NULL) {
+        printf("%d ", temp->data);
+        temp = temp->next;
+    }
+    printf("\n");
+}
+
+int exists(struct Node* head, int value) {
+    struct Node* temp = head;
+    while (temp != NULL) {
+        if (temp->data == value) {
+            return 1;
+        }
+        temp = temp->next;
+    }
+    return 0;
+}
+
+struct Node* unionOfLists(struct Node* X1, struct Node* X2) {
+    struct Node* result = NULL;
+    struct Node* temp = X1;
+
+    while (temp != NULL) {
+        insertRear(&result, temp->data);
+        temp = temp->next;
+    }
+
+    temp = X2;
+    while (temp != NULL) {
+        if (!exists(X1, temp->data)) {
+            insertRear(&result, temp->data);
+        }
+        temp = temp->next;
+    }
+
+    return result;
+}
+
+struct Node* intersectionOfLists(struct Node* X1, struct Node* X2) {
+    struct Node* result = NULL;
+    struct Node* temp = X1;
+
+    while (temp != NULL) {
+        if (exists(X2, temp->data)) {
+            insertRear(&result, temp->data);
+        }
+        temp = temp->next;
+    }
+
+    return result;
+}
+
+int main() {
+    struct Node* X1 = NULL;
+    struct Node* X2 = NULL;
+
+    int n1, n2, value;
+
+    printf("Enter number of elements in list X1: ");
+    scanf("%d", &n1);
+    for (int i = 0; i < n1; i++) {
+        printf("Enter element %d for X1: ", i + 1);
+        scanf("%d", &value);
+        insertRear(&X1, value);
+    }
+
+    printf("Enter number of elements in list X2: ");
+    scanf("%d", &n2);
+    for (int i = 0; i < n2; i++) {
+        printf("Enter element %d for X2: ", i + 1);
+        scanf("%d", &value);
+        insertRear(&X2, value);
+    }
+
+    struct Node* unionList = unionOfLists(X1, X2);
+    struct Node* intersectionList = intersectionOfLists(X1, X2);
+
+    printf("Union of the lists: ");
+    traverse(unionList);
+
+    printf("Intersection of the lists: ");
+    traverse(intersectionList);
+
+    return 0;
+}
