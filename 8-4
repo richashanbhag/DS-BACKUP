@@ -1,0 +1,48 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
+void addLargeNumbers(char num1[], char num2[]) {
+    int len1 = strlen(num1);
+    int len2 = strlen(num2);
+
+    int maxLen = len1 > len2 ? len1 : len2;
+    int carry = 0;
+
+    char* result = (char*)malloc(maxLen + 2);
+    result[maxLen + 1] = '\0';
+
+    int i = len1 - 1, j = len2 - 1, k = maxLen;
+
+    while (i >= 0 || j >= 0 || carry > 0) {
+        int digit1 = (i >= 0) ? num1[i--] - '0' : 0;
+        int digit2 = (j >= 0) ? num2[j--] - '0' : 0;
+
+        int sum = digit1 + digit2 + carry;
+        carry = sum / 10;
+        result[k--] = (sum % 10) + '0';
+    }
+
+    if (result[0] == '0') {
+        printf("%s\n", result + 1);
+    } else {
+        printf("%s\n", result);
+    }
+
+    free(result);
+}
+
+int main() {
+    char num1[1000], num2[1000];
+
+    printf("Enter the first large number: ");
+    scanf("%s", num1);
+
+    printf("Enter the second large number: ");
+    scanf("%s", num2);
+
+    printf("Sum of the two large numbers: ");
+    addLargeNumbers(num1, num2);
+
+    return 0;
+}
