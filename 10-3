@@ -1,0 +1,49 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node* left;
+    struct Node* right;
+};
+
+struct Node* createNode(int data) {
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    newNode->data = data;
+    newNode->left = NULL;
+    newNode->right = NULL;
+    return newNode;
+}
+
+struct Node* createBinaryTree() {
+    int data;
+    printf("Enter data (-1 for no node): ");
+    scanf("%d", &data);
+    if (data == -1) return NULL;
+    struct Node* newNode = createNode(data);
+    printf("Enter left child of %d:\n", data);
+    newNode->left = createBinaryTree();
+    printf("Enter right child of %d:\n", data);
+    newNode->right = createBinaryTree();
+    return newNode;
+}
+
+int areTreesEqual(struct Node* root1, struct Node* root2) {
+    if (root1 == NULL && root2 == NULL) return 1;
+    if (root1 == NULL || root2 == NULL) return 0;
+    return (root1->data == root2->data) &&
+           areTreesEqual(root1->left, root2->left) &&
+           areTreesEqual(root1->right, root2->right);
+}
+
+int main() {
+    printf("Create first tree:\n");
+    struct Node* root1 = createBinaryTree();
+    printf("Create second tree:\n");
+    struct Node* root2 = createBinaryTree();
+
+    if (areTreesEqual(root1, root2)) printf("The trees are equal\n");
+    else printf("The trees are not equal\n");
+
+    return 0;
+}
