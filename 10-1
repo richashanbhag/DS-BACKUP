@@ -1,0 +1,184 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node* left;
+    struct Node* right;
+};
+
+struct Stack {
+    struct Node* node;
+    struct Stack* next;
+};
+
+void push(struct Stack** top, struct Node* node) {
+    struct Stack* newStack = (struct Stack*)malloc(sizeof(struct Stack));
+    newStack->node = node;
+    newStack->next = *top;
+    *top = newStack;
+}
+
+struct Node* pop(struct Stack** top) {
+    if (*top == NULL) return NULL;
+    struct Stack* temp = *top;
+    *top = (*top)->next;
+    struct Node* node = temp->node;
+    free(temp);
+    return node;
+}
+
+int isEmpty(struct Stack* top) {
+    return top == NULL;
+}
+
+struct Node* createNode(int data) {
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    newNode->data = data;
+    newNode->left = NULL;
+    newNode->right = NULL;
+    return newNode;
+}
+
+struct Node* insertNode(struct Node* root, int data) {
+    if (root == NULL) return createNode(data);
+    if (data < root->data)
+        root->left = insertNode(root->left, data);
+    else
+        root->right = insertNode(root->right, data);
+    return root;
+}
+
+void inOrder(struct Node* root) {
+    struct Stack* stack = NULL;
+    struct Node* current = root;
+    while (!isEmpty(stack) || current != NULL) {
+        if (current != NULL) {
+            push(&stack, current);
+            current = current->left;
+        } else {
+            current = pop(&stack);
+            printf("%d ", current->data);
+            current = current->right;
+        }
+    }
+}
+
+void postOrder(struct Node* root) {
+    struct Stack *stack1 = NULL, *stack2 = NULL;
+    if (root == NULL) return;
+    push(&stack1, root);
+    while (!isEmpty(stack1)) {
+        struct Node* temp = pop(&stack1);
+        push(&stack2, temp);
+        if (temp->left) push(&stack1, temp->left);
+        if (temp->right) push(&stack1, temp->right);
+    }
+    while (!isEmpty(stack2)) {
+        struct Node* temp = pop(&stack2);
+        printf("%d ", temp->data);
+    }
+}
+
+void preOrder(struct Node* root) {
+    struct Stack* stack = NULL;
+    if (root == NULL) return;
+    push(&stack, root);
+    while (!isEmpty(stack)) {
+        struct Node* temp = pop(&stack);
+        printf("%d ", temp->data);
+        if (temp->right) push(&stack, temp->right);
+        if (temp->left) push(&stack, temp->left);
+    }
+}
+
+struct Node* findParent(struct Node* root, int value) {
+    if (root == NULL || root->data == value) return NULL;
+    if ((root->left && root->left->data == value) || (root->right && root->right->data == value)) return root;
+    struct Node* left = findParent(root->left, value);
+    if (left) return left;
+    return findParent(root->right, value);
+}
+
+int findDepth(struct Node* root) {
+    if (root == NULL) return 0;
+    int leftDepth = findDepth(root->left);
+    int rightDepth = findDepth(root->right);
+    return (leftDepth > rightDepth ? leftDepth : rightDepth) + 1;
+}
+
+int findAncestors(struct Node* root, int value) {
+    if (root == NULL) return 0;
+    if (root->data == value) return 1;
+    if (findAncestors(root->left, value) || findAncestors(root->right, value)) {
+        printf("%d ", root->data);
+        return 1;
+    }
+    return 0;
+}
+
+int countLeafNodes(struct Node* root) {
+    if (root == NULL) return 0;
+    if (root->left == NULL && root->right == NULL) return 1;
+    return countLeafNodes(root->left) + countLeafNodes(root->right);
+}
+
+int main() {
+    struct Node* root = NULL;
+    int choice, value, num;
+
+    while (1) {
+        printf("\n1. Insert Node\n2. In-order Traversal\n3. Post-order Traversal\n4. Pre-order Traversal\n");
+        printf("5. Find Parent of Node\n6. Find Depth of Tree\n7. Find Ancestors of Node\n8. Count Leaf Nodes\n9. Exit\nEnter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 1:
+                printf("Enter the value to insert: ");
+                scanf("%d", &value);
+                root = insertNode(root, value);
+                break;
+            case 2:
+                printf("In-order Traversal: ");
+                inOrder(root);
+                printf("\n");
+                break;
+            case 3:
+                printf("Post-order Traversal: ");
+                postOrder(root);
+                printf("\n");
+                break;
+            case 4:
+                printf("Pre-order Traversal: ");
+                preOrder(root);
+                printf("\n");
+                break;
+            case 5:
+                printf("Enter the value to find its parent: ");
+                scanf("%d", &value);
+                struct Node* parent = findParent(root, value);
+                if (parent) printf("Parent of %d is: %d\n", value, parent->data);
+                else printf("Parent not found or the node is the root\n");
+                break;
+            case 6:
+                printf("Depth of tree: %d\n", findDepth(root));
+                break;
+            case 7:
+                printf("Enter the value to find its ancestors: ");
+                scanf("%d", &value);
+                printf("Ancestors of %d: ", value);
+                if (!findAncestors(root, value)) printf("No ancestors found");
+                printf("\n");
+                break;
+            case 8:
+                printf("Number of leaf nodes: %d\n", countLeafNodes(root));
+                break;
+            case 9:
+                exit(0);
+            default:
+                printf("Invalid choice\n");
+        }
+    }
+    
+    return 0;
+}
