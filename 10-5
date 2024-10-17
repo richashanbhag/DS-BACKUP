@@ -1,0 +1,56 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node* left;
+    struct Node* right;
+};
+
+struct Node* createNode(int data) {
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    newNode->data = data;
+    newNode->left = NULL;
+    newNode->right = NULL;
+    return newNode;
+}
+
+struct Node* createBinaryTree() {
+    int data;
+    printf("Enter data (-1 for no node): ");
+    scanf("%d", &data);
+    if (data == -1) return NULL;
+    struct Node* newNode = createNode(data);
+    printf("Enter left child of %d:\n", data);
+    newNode->left = createBinaryTree();
+    printf("Enter right child of %d:\n", data);
+    newNode->right = createBinaryTree();
+    return newNode;
+}
+
+struct Node* copyTree(struct Node* root) {
+    if (root == NULL) return NULL;
+    struct Node* newNode = createNode(root->data);
+    newNode->left = copyTree(root->left);
+    newNode->right = copyTree(root->right);
+    return newNode;
+}
+
+void preOrder(struct Node* root) {
+    if (root == NULL) return;
+    printf("%d ", root->data);
+    preOrder(root->left);
+    preOrder(root->right);
+}
+
+int main() {
+    printf("Create original tree:\n");
+    struct Node* root1 = createBinaryTree();
+    struct Node* root2 = copyTree(root1);
+
+    printf("Pre-order traversal of copied tree: ");
+    preOrder(root2);
+    printf("\n");
+
+    return 0;
+}
