@@ -1,0 +1,70 @@
+#include <stdio.h>
+
+#define MAX 100
+
+int queue[MAX], front = -1, rear = -1;
+
+void enqueue(int vertex) {
+    if (rear == MAX - 1)
+        return;
+    if (front == -1)
+        front = 0;
+    queue[++rear] = vertex;
+}
+
+int dequeue() {
+    if (front == -1)
+        return -1;
+    int item = queue[front];
+    if (front >= rear)
+        front = rear = -1;
+    else
+        front++;
+    return item;
+}
+
+int isQueueEmpty() {
+    return front == -1;
+}
+
+void bfs(int adjMatrix[MAX][MAX], int visited[MAX], int startVertex, int n) {
+    enqueue(startVertex);
+    visited[startVertex] = 1;
+
+    while (!isQueueEmpty()) {
+        int currentVertex = dequeue();
+        printf("%d ", currentVertex);
+
+        for (int i = 0; i < n; i++) {
+            if (adjMatrix[currentVertex][i] && !visited[i]) {
+                enqueue(i);
+                visited[i] = 1;
+            }
+        }
+    }
+}
+
+int main() {
+    int n, edges, adjMatrix[MAX][MAX] = {0}, visited[MAX] = {0};
+    printf("Enter the number of vertices: ");
+    scanf("%d", &n);
+
+    printf("Enter the number of edges: ");
+    scanf("%d", &edges);
+
+    for (int i = 0; i < edges; i++) {
+        int src, dest;
+        printf("Enter source and destination: ");
+        scanf("%d %d", &src, &dest);
+        adjMatrix[src][dest] = 1;
+    }
+
+    printf("Enter the starting vertex: ");
+    int startVertex;
+    scanf("%d", &startVertex);
+
+    printf("BFS Traversal: ");
+    bfs(adjMatrix, visited, startVertex, n);
+
+    return 0;
+}
