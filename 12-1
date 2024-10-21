@@ -1,0 +1,58 @@
+#include <stdio.h>
+
+#define MAX 100
+
+void createDirectedMatrix(int adjMatrix[MAX][MAX], int n) {
+    int i, j, edges, src, dest;
+    printf("Enter the number of edges: ");
+    scanf("%d", &edges);
+    
+    for (i = 0; i < edges; i++) {
+        printf("Enter the source and destination: ");
+        scanf("%d %d", &src, &dest);
+        adjMatrix[src][dest] = 1;
+    }
+}
+
+void createUndirectedMatrix(int adjMatrix[MAX][MAX], int n) {
+    int i, j, edges, src, dest;
+    printf("Enter the number of edges: ");
+    scanf("%d", &edges);
+    
+    for (i = 0; i < edges; i++) {
+        printf("Enter the two vertices: ");
+        scanf("%d %d", &src, &dest);
+        adjMatrix[src][dest] = 1;
+        adjMatrix[dest][src] = 1;
+    }
+}
+
+void displayMatrix(int adjMatrix[MAX][MAX], int n) {
+    int i, j;
+    for (i = 0; i < n; i++) {
+        for (j = 0; j < n; j++) {
+            printf("%d ", adjMatrix[i][j]);
+        }
+        printf("\n");
+    }
+}
+
+int main() {
+    int n, choice, adjMatrix[MAX][MAX] = {0};
+    
+    printf("Enter the number of vertices: ");
+    scanf("%d", &n);
+    
+    printf("1. Directed Graph\n2. Undirected Graph\n");
+    scanf("%d", &choice);
+    
+    if (choice == 1)
+        createDirectedMatrix(adjMatrix, n);
+    else
+        createUndirectedMatrix(adjMatrix, n);
+    
+    printf("Adjacency Matrix:\n");
+    displayMatrix(adjMatrix, n);
+    
+    return 0;
+}
